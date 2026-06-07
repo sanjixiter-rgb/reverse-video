@@ -3,41 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reverse Editor</title>
+    <title>Reverse Studio</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="sidebar">
-        <h1>Reverse</h1>
-    </div>
+    <aside class="sidebar">
+        <h1>Reverse Studio</h1>
+    </aside>
 
-    <div class="main">
+    <main class="main">
 
         <div class="topbar">
-            <h2>Video Reverse Tool</h2>
+            <h2>Reverse Video Tool</h2>
+            <p>Faça reverse de vídeos diretamente no navegador.</p>
         </div>
 
         <div class="upload-area" id="uploadArea">
-            <p>Arraste um vídeo aqui</p>
-            <input type="file" id="videoInput" accept="video/*">
+            <p>📁 Arraste um vídeo aqui ou selecione um arquivo</p>
+
+            <input
+                type="file"
+                id="videoInput"
+                accept="video/*"
+            >
         </div>
 
-        <video id="preview" controls></video>
+        <video
+            id="preview"
+            controls
+        ></video>
 
         <div class="buttons">
+
             <button id="reverseBtn">
-                Reverter Vídeo
+                🔄 Reverter Vídeo
             </button>
 
             <button id="downloadBtn">
-                Exportar
+                ⬇ Exportar MP4
             </button>
+
         </div>
 
-    </div>
+        <div class="progress-container">
+            <div
+                class="progress-bar"
+                id="progressBar"
+            ></div>
+        </div>
 
-<script src="script.js"></script>
+        <p id="status">Pronto</p>
+
+    </main>
+
+    <!-- FFmpeg -->
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+
+    <!-- Seu JS -->
+    <script src="script.js"></script>
+
 </body>
-          </html>
+</html>
