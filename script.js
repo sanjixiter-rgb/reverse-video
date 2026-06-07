@@ -1,105 +1,106 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter,sans-serif;
-}
+const input = document.getElementById("videoInput");
+const preview = document.getElementById("preview");
+const reverseBtn = document.getElementById("reverseBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const progressBar = document.getElementById("progressBar");
+const statusText = document.getElementById("status");
 
-body{
-    background:#0d0d0d;
-    color:white;
-    display:flex;
-    min-height:100vh;
-}
+let uploadedFile = null;
+let outputURL = null;
 
-.sidebar{
-    width:240px;
-    background:#111;
-    border-right:1px solid #222;
-    padding:25px;
-}
+input.addEventListener("change", () => {
+    uploadedFile = input.files[0];
 
-.sidebar h1{
-    color:#00d4ff;
-}
+    if (!uploadedFile) return;
 
-.main{
-    flex:1;
-    padding:30px;
-}
+    preview.src = URL.createObjectURL(uploadedFile);
+    statusText.textContent = "Vídeo carregado.";
+});
 
-.topbar{
-    margin-bottom:25px;
-}
+reverseBtn.addEventListener("click", async () => {
 
-.topbar p{
-    color:#aaa;
-    margin-top:5px;
-}
+    if (!uploadedFile) {
+        alert("Escolha um vídeo primeiro.");
+        return;
+    }
 
-.upload-area{
-    border:2px dashed #333;
-    background:#161616;
-    border-radius:16px;
-    padding:50px;
-    text-align:center;
-    cursor:pointer;
-    transition:.2s;
-}
+    try {
 
-.upload-area:hover{
-    border-color:#00d4ff;
-}
+        statusText.textContent = "Carregando FFmpeg...";
 
-#videoInput{
-    margin-top:15px;
-}
+        const { FFmpeg } = FFmpegWASM;
 
-#preview{
-    width:100%;
-    max-height:500px;
-    margin-top:20px;
-    border-radius:15px;
-    background:black;
-}
+        const ffmpeg = new FFmpeg();
 
-.buttons{
-    margin-top:20px;
-    display:flex;
-    gap:15px;
-}
+        await ffmpeg.load();
 
-button{
-    padding:12px 24px;
-    border:none;
-    border-radius:10px;
-    background:#00d4ff;
-    color:black;
-    font-weight:bold;
-    cursor:pointer;
-}
+        ffmpeg.on("progress", ({ progress }) => {
+            progressBar.style.width = `${Math.round(progress * 100)}%`;
+        });
 
-button:hover{
-    opacity:.9;
-}
+        statusText.textContent = "Processando vídeo...";
 
-.progress-container{
-    width:100%;
-    height:12px;
-    background:#222;
-    border-radius:999px;
-    overflow:hidden;
-    margin-top:20px;
-}
+        const data = new Uint8Array(
+            await uploadedFile.arrayBuffer()
+        );
 
-.progress-bar{
-    width:0%;
-    height:100%;
-    background:#00d4ff;
-    transition:.2s;
-}
+        await ffmpeg.writeFile(
+            "input.mp4",
+            data
+        );
 
-#status{
-    margin-top:10px;
-    color:#aaa;
-}
+        await ffmpeg.exec([
+            "-i",
+            "input.mp4",
+            "-vf",
+            "reverse",
+            "-af",
+            "areverse",
+            "output.mp4"
+        ]);
+
+        const output = await ffmpeg.readFile(
+            "output.mp4"
+        );
+
+        const blob = new Blob(
+            [output.buffer],
+            { type: "video/mp4" }
+        );
+
+        outputURL = URL.createObjectURL(blob);
+
+        preview.src = outputURL;
+
+        statusText.textContent =
+            "Reverse concluído!";
+
+    } catch (err) {
+
+        console.error(err);
+
+        statusText.textContent =
+            "Erro ao processar vídeo.";
+
+    }
+});
+
+downloadBtn.addEventListener("click", () => {
+
+    if (!outputURL) {
+        alert("Nenhum vídeo processado.");
+        return;
+    }
+
+    const a = document.createElement("a");
+
+    a.href = outputURL;
+    a.download = "reverse.mp4";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+});
