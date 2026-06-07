@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Editor</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1>Reverse</h1>
+    </div>
+
+    <div class="main">
+
+        <div class="topbar">
+            <h2>Video Reverse Tool</h2>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <p>Arraste um vídeo aqui</p>
+            <input type="file" id="videoInput" accept="video/*">
+        </div>
+
+        <video id="preview" controls></video>
+
+        <div class="buttons">
+            <button id="reverseBtn">
+                Reverter Vídeo
+            </button>
+
+            <button id="downloadBtn">
+                Exportar
+            </button>
+        </div>
+
+    </div>
+
+<script src="script.js"></script>
+</body>
+          </html>
